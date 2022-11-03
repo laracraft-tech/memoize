@@ -2,6 +2,8 @@
 
 namespace LaracraftTech\DoOnce;
 
+use Dotenv\Dotenv;
+
 trait HasDoOnce
 {
     /**
@@ -39,6 +41,10 @@ trait HasDoOnce
      */
     public static function isEnabledDoOnce(): bool
     {
+        if (isset($_ENV['DO_ONCE_GLOBALLY_DISABLED'])) {
+            return $_ENV['DO_ONCE_GLOBALLY_DISABLED'];
+        }
+
         return self::$doOnceEnabled;
     }
 
@@ -48,7 +54,7 @@ trait HasDoOnce
      */
     private static function doOnce(callable $callback)
     {
-        if (!self::$doOnceEnabled) {
+        if (!self::isEnabledDoOnce()) {
             return $callback();
         }
 
@@ -66,13 +72,13 @@ trait HasDoOnce
 
         if (!is_null($cacheKey)) {
             if (!array_key_exists($cacheTypePrefix, self::$doOnceCache) || !array_key_exists($cacheKey, self::$doOnceCache[$cacheTypePrefix])) {
-                self::$doOnceCache[$cacheTypePrefix][$cacheKey] = $callback() ?? null;
+                self::$doOnceCache[$cacheTypePrefix][$cacheKey] = $callback();
             }
 
             $cache = self::$doOnceCache[$cacheTypePrefix][$cacheKey];
         } else {
             if (!array_key_exists($cacheTypePrefix, self::$doOnceCache)) {
-                self::$doOnceCache[$cacheTypePrefix] = $callback() ?? null;
+                self::$doOnceCache[$cacheTypePrefix] = $callback();
             }
 
             $cache = self::$doOnceCache[$cacheTypePrefix];
