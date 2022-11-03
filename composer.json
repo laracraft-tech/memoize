@@ -1,0 +1,39 @@
+{
+    "name": "laracraft-tech/do-once",
+    "description": "Simple PHP trait to run code only once.",
+    
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "LaracraftTech\\DoOnce\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaracraftTech\\DoOnce\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest"
+    },
+    "authors": [
+        {
+            "name": "Zacharias Creutznacher",
+            "email": "zacharias.creutznacher@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.3|^8.0",
+        "symfony/var-dumper": "^6.1",
+        "spatie/once": "^3.1"
+    },
+    "require-dev": {
+        "pestphp/pest": "^1.22"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
