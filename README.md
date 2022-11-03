@@ -62,6 +62,26 @@ class MyClass
 
 So calling `MyClass::getNumberForLetter('A')` will always return the same result, but calling `MyClass::getNumberForLetter('B')` will return something else.
 
+## Enable/Disable
+
+You can globally enable or disable the doOnce cache by setting `DO_ONCE_GLOBALLY_DISABLED` to `true` in your `.env` file.
+
+If you only want to disable to doOnce cache for a specifiy class, do something like this:
+
+```php
+use LaracraftTech\DoOnce\HasDoOnce;
+
+class MyClass
+{
+    use HasDoOnce;
+    
+    public function __construct()
+    {
+        $this->disableDoOnce();
+    }
+}
+```
+
 ## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
