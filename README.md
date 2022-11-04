@@ -49,7 +49,7 @@ class MyClass
      */
     public static function getNumberForLetter($letter)
     {
-        return once(function () use ($letter) {
+        return $this->doOnce(function () use ($letter) {
             return $letter . rand(1, 10000000);
         }, $letter); // <-- add this for php8.0 or lower
     }
