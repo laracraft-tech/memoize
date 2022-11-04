@@ -39,7 +39,11 @@ $myClass = new class()
 
 No matter how many times you run `$myClass->getNumber()` you'll always get the same number.
 
-The `doOnce` function will only run once per combination of argument values the containing method receives.
+The `doOnce` function will only run once per combination.
+
+Spaties once package uses the arguments of the outer function for the "once per combination" idea.
+Which does not work, if you want to use variables inside the callable which are not passed as a parameter to the outer function!
+We let you fully self define your "once per combination" key.
 
 ```php
 use LaracraftTech\DoOnce\HasDoOnce;
@@ -51,16 +55,16 @@ class MyClass
     /**
      * It also works in static context!
      */
-    public static function getNumberForLetter($letter)
+    public static function getNumberForLetter($someModel, $letter)
     {
-        return self::doOnce(function () use ($letter) {
-            return $letter . rand(1, 10000000);
-        });
+        return self::doOnce(function () use ($letter, $someModel) {
+            return $letter . rand(1, 10000000) . $someModel->title;
+        }, [$letter, $someModel->id]); // <-- set your "once per combination" key (array|string|int)
     }
 }
 ```
 
-So calling `MyClass::getNumberForLetter('A')` will always return the same result, but calling `MyClass::getNumberForLetter('B')` will return something else.
+So calling `MyClass::getModelNumberForLetter(SomeModel::find(1), 'A')` will always return the same result, but calling `MyClass::getNumberForLetter(SomeModel::find(1), 'B')` will return something else.
 
 ## Enable/Disable
 

@@ -50,9 +50,11 @@ trait HasDoOnce
 
     /**
      * @param callable $callback
+     * @param null $combinationCacheKey
      * @return array|mixed
+     * @throws \ReflectionException
      */
-    private static function doOnce(callable $callback)
+    private static function doOnce(callable $callback, $combinationCacheKey = null)
     {
         if (!self::isEnabledDoOnce()) {
             return $callback();
@@ -65,17 +67,22 @@ trait HasDoOnce
         $cache = null;
         $cacheTypePrefix = $trace[1]['function'].'_'.$trace[0]['line'];
 
-        $cacheKey = null;
-        if (!empty($trace[1]['args'])) {
-            $cacheKey = implode('_', $trace[1]['args']);
+        // Since PHP 8.1 we can generate combination cache key by closure used variables,
+        // if they are set and no combinationCacheKey was passed manually, we use them
+        // in PHP versions below 8.1 one needs to add these manually
+        if (is_null($combinationCacheKey) && PHP_VERSION_ID >= 80100) {
+            $refFunc = new \ReflectionFunction($callback);
+            $combinationCacheKey = $refFunc->getClosureUsedVariables();
         }
 
-        if (!is_null($cacheKey)) {
-            if (!array_key_exists($cacheTypePrefix, self::$doOnceCache) || !array_key_exists($cacheKey, self::$doOnceCache[$cacheTypePrefix])) {
-                self::$doOnceCache[$cacheTypePrefix][$cacheKey] = $callback();
+
+        if (!is_null($combinationCacheKey)) {
+            $combinationCacheKey = (is_array($combinationCacheKey)) ? implode('_', $combinationCacheKey) : $combinationCacheKey ;
+            if (!array_key_exists($cacheTypePrefix, self::$doOnceCache) || !array_key_exists($combinationCacheKey, self::$doOnceCache[$cacheTypePrefix])) {
+                self::$doOnceCache[$cacheTypePrefix][$combinationCacheKey] = $callback();
             }
 
-            $cache = self::$doOnceCache[$cacheTypePrefix][$cacheKey];
+            $cache = self::$doOnceCache[$cacheTypePrefix][$combinationCacheKey];
         } else {
             if (!array_key_exists($cacheTypePrefix, self::$doOnceCache)) {
                 self::$doOnceCache[$cacheTypePrefix] = $callback();

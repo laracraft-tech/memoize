@@ -26,7 +26,7 @@ it('will run the a callback without arguments only once', function () {
     }
 });
 
-it('will run the given callback only once per variation arguments in use', function () {
+it('will run the given callback only once per use arguments combination', function () {
     $testClass = new class() {
         use HasDoOnce;
 
@@ -34,7 +34,7 @@ it('will run the given callback only once per variation arguments in use', funct
         {
             return $this->doOnce(function () use ($letter) {
                 return $letter.rand(1, 10000000);
-            });
+            }, [$letter]);
         }
     };
 
@@ -42,7 +42,7 @@ it('will run the given callback only once per variation arguments in use', funct
         $firstResult = $testClass->getNumberForLetter($letter);
         expect($firstResult)->toStartWith($letter);
 
-        foreach (range(1, 100) as $i) {
+        foreach (range(1, 2) as $i) {
             expect($testClass->getNumberForLetter($letter))->toBe($firstResult);
         }
     }
