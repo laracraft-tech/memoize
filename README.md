@@ -39,7 +39,7 @@ $myClass = new class()
 
 No matter how many times you run `$myClass->getNumber()` you'll always get the same number.
 
-The `doOnce` method will only run once per combination of argument values the closure receives.
+The `doOnce` method will only run once per combination of `use` variables the closure receives.
 
 ```php
 class MyClass
@@ -60,7 +60,7 @@ So calling `MyClass::getNumberForLetter('A')` will always return the same result
 
 Spaties once package uses the arguments of the outer method for the "once per combination" idea.
 We think this feels a bit unintuitive, so we use the `use` variables of the closure as the "once per combination" key.
-As a fallback for php8.0 and lower or if you like/need to, we also let you fully self define your "once per combination" key in a second optional parameter to the closure.
+As a fallback for php8.0 and lower or if you like/need to, we also let you fully self define your "once per combination" key in a second optional parameter of the closure.
 
 ```php
 use LaracraftTech\DoOnce\HasDoOnce;
@@ -69,14 +69,11 @@ class MyClass
 {
     use HasDoOnce;
     
-    /**
-     * It also works in static context!
-     */
     public static function getModelNumberForLetter($someModel)
     {
         return self::doOnce(function () use ($someModel) {
             return $someModel->letter . rand(1, 10000000);
-        }, $someModel->id); // <-- on PHP 8.0 and lower or if you like to you can set your "once per combination" key (array|string|int)
+        }, $someModel->id);
     }
 }
 ```
