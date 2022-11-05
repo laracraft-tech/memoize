@@ -1,12 +1,12 @@
 <?php
 
-namespace LaracraftTech\DoOnce\Test;
+namespace LaracraftTech\Memoize\Test;
 
-use LaracraftTech\DoOnce\HasDoOnce;
+use LaracraftTech\Memoize\HasMemoization;
 
 class TestClass
 {
-    use HasDoOnce;
+    use HasMemoization;
 
     protected $randomNumber;
 
@@ -17,7 +17,7 @@ class TestClass
 
     public function getRandomNumber()
     {
-        return $this->doOnce(function () {
+        return $this->memoize(function () {
             return $this->randomNumber;
         });
     }

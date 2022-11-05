@@ -1,15 +1,15 @@
 {
-    "name": "laracraft-tech/do-once",
-    "description": "Simple PHP trait to run code only once.",
+    "name": "laracraft-tech/memoize",
+    "description": "Simple PHP trait to memoize function calls.",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "LaracraftTech\\DoOnce\\": "src/"
+            "LaracraftTech\\Memoize\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaracraftTech\\DoOnce\\Test\\": "tests"
+            "LaracraftTech\\Memoize\\Test\\": "tests"
         }
     },
     "scripts": {

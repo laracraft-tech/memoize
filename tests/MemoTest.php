@@ -1,16 +1,16 @@
 <?php
 
-namespace LaracraftTech\DoOnce\Test;
+namespace LaracraftTech\Memoize\Test;
 
-use LaracraftTech\DoOnce\HasDoOnce;
+use LaracraftTech\Memoize\HasMemoization;
 
 it('will run the a callback without arguments only once', function () {
     $testClass = new class() {
-        use HasDoOnce;
+        use HasMemoization;
 
         public function getNumber()
         {
-            return $this->doOnce(function () {
+            return $this->memoize(function () {
                 return rand(1, 10000000);
             });
         }
@@ -28,11 +28,11 @@ it('will run the a callback without arguments only once', function () {
 
 it('will run the given callback only once per use arguments combination', function () {
     $testClass = new class() {
-        use HasDoOnce;
+        use HasMemoization;
 
         public function getNumberForLetter($letter)
         {
-            return $this->doOnce(function () use ($letter) {
+            return $this->memoize(function () use ($letter) {
                 return $letter.rand(1, 10000000);
             }, [$letter]);
         }
@@ -50,13 +50,13 @@ it('will run the given callback only once per use arguments combination', functi
 
 it('will run the given callback only once for falsy result', function () {
     $testClass = new class() {
-        use HasDoOnce;
+        use HasMemoization;
 
         public $counter = 0;
 
         public function getNull()
         {
-            return $this->doOnce(function () {
+            return $this->memoize(function () {
                 $this->counter++;
             });
         }
@@ -102,11 +102,11 @@ it('will remember the memoized value when serialized when called in the same req
 
 it('will run callback once on static method', function () {
     $object = new class() {
-        use HasDoOnce;
+        use HasMemoization;
 
         public static function getNumber()
         {
-            return self::doOnce(function () {
+            return self::memoize(function () {
                 return rand(1, 10000000);
             });
         }
@@ -125,25 +125,25 @@ it('will run callback once on static method', function () {
 
 it('can enable and disable the cache', function () {
     $testClass = new class() {
-        use HasDoOnce;
+        use HasMemoization;
 
         public function getNumber()
         {
-            return $this->doOnce(function () {
+            return $this->memoize(function () {
                 return random_int(1, 10000000);
             });
         }
     };
 
-    expect($testClass::isEnabledDoOnce())->toBeTrue();
+    expect($testClass::isEnabledMemoization())->toBeTrue();
     expect($testClass->getNumber())->toBe($testClass->getNumber());
 
-    $testClass::disableDoOnce();
-    expect($testClass->isEnabledDoOnce())->toBeFalse();
+    $testClass::disableMemoization();
+    expect($testClass->isEnabledMemoization())->toBeFalse();
     expect($testClass->getNumber())->not()->toBe($testClass->getNumber());
 
-    $testClass::enableDoOnce();
-    expect($testClass::isEnabledDoOnce())->toBeTrue();
+    $testClass::enableMemoization();
+    expect($testClass::isEnabledMemoization())->toBeTrue();
     expect($testClass->getNumber())->toBe($testClass->getNumber());
 });
 //
@@ -155,12 +155,12 @@ it('can enable and disable the cache', function () {
 
 it('will differentiate between closures', function () {
     $testClass = new class() {
-        use HasDoOnce;
+        use HasMemoization;
 
         public function getNumber()
         {
             $closure = function () {
-                return $this->doOnce(function () {
+                return $this->memoize(function () {
                     return random_int(1, 1000);
                 });
             };
@@ -171,7 +171,7 @@ it('will differentiate between closures', function () {
         public function secondNumber()
         {
             $closure = function () {
-                return $this->doOnce(function () {
+                return $this->memoize(function () {
                     return random_int(1001, 2000);
                 });
             };
@@ -186,11 +186,11 @@ it('will differentiate between closures', function () {
 it('will run faster then spatie/once', function () {
     $start1 = microtime(true);
     $testClass1 = new class() {
-        use HasDoOnce;
+        use HasMemoization;
 
         public function getNumber()
         {
-            return $this->doOnce(function () {
+            return $this->memoize(function () {
                 return rand(1, 10000000);
             });
         }

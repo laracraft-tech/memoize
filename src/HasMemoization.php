@@ -1,51 +1,49 @@
 <?php
 
-namespace LaracraftTech\DoOnce;
+namespace LaracraftTech\Memoize;
 
-use Dotenv\Dotenv;
-
-trait HasDoOnce
+trait HasMemoization
 {
-    /**
-     * specifies if doOnce should be applied
-     *
-     * @var bool
-     */
-    protected static $doOnceEnabled = true;
-
     /**
      * the array where the cache is temporary stored during runtime
      *
      * @var array
      */
-    protected static $doOnceCache = [];
+    protected static $memoizationCache = [];
+
+    /**
+     * specifies if memoization should be applied
+     *
+     * @var bool
+     */
+    protected static $memoizationEnabled = true;
 
     /**
      * @return void
      */
-    public static function enableDoOnce()
+    public static function enableMemoization()
     {
-        self::$doOnceEnabled = true;
+        self::$memoizationEnabled = true;
     }
 
     /**
      * @return void
      */
-    public static function disableDoOnce()
+    public static function disableMemoization()
     {
-        self::$doOnceEnabled = false;
+        self::$memoizationEnabled = false;
     }
 
     /**
      * @return bool
      */
-    public static function isEnabledDoOnce(): bool
+    public static function isEnabledMemoization(): bool
     {
-        if (isset($_ENV['DO_ONCE_GLOBALLY_DISABLED'])) {
-            return $_ENV['DO_ONCE_GLOBALLY_DISABLED'];
+        if (isset($_ENV['MEMOIZATION_GLOBALLY_DISABLED'])) {
+            return $_ENV['MEMOIZATION_GLOBALLY_DISABLED'];
         }
 
-        return self::$doOnceEnabled;
+        return self::$memoizationEnabled;
     }
 
     /**
@@ -54,9 +52,9 @@ trait HasDoOnce
      * @return array|mixed
      * @throws \ReflectionException
      */
-    private static function doOnce(callable $callback, array $combiArgs = [])
+    private static function memoize(callable $callback, array $combiArgs = [])
     {
-        if (!self::isEnabledDoOnce()) {
+        if (!self::isEnabledMemoization()) {
             return $callback();
         }
 
@@ -74,16 +72,16 @@ trait HasDoOnce
             }
         }
 
-        $hash = self::getDoOnceCacheHash($combiArgs, $trace);
+        $hash = self::getMemoCacheHash($combiArgs, $trace);
 
-        if (!array_key_exists($hash, self::$doOnceCache)) {
-            self::$doOnceCache[$hash] = $callback();
+        if (!array_key_exists($hash, self::$memoizationCache)) {
+            self::$memoizationCache[$hash] = $callback();
         }
 
-        return self::$doOnceCache[$hash];
+        return self::$memoizationCache[$hash];
     }
 
-    private static function getDoOnceCacheHash(array $arguments, $trace): string
+    private static function getMemoCacheHash(array $arguments, $trace): string
     {
         $prefix = $trace[1]['function'].'_'.$trace[0]['line'];
 

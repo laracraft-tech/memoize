@@ -1,9 +1,9 @@
-# DoOnce
+# Memoize
 
 <p align="left">
-<!--<a href="https://packagist.org/packages/laracraft-tech/do-once"><img src="https://img.shields.io/packagist/dt/laracraft-tech/do-once" alt="Total Downloads"></a>-->
-<a href="https://packagist.org/packages/laracraft-tech/do-once"><img src="https://img.shields.io/packagist/v/laracraft-tech/do-once" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laracraft-tech/do-once"><img src="https://img.shields.io/packagist/l/laracraft-tech/do-once" alt="License"></a>
+<!--<a href="https://packagist.org/packages/laracraft-tech/memoize"><img src="https://img.shields.io/packagist/dt/laracraft-tech/memoize" alt="Total Downloads"></a>-->
+<a href="https://packagist.org/packages/laracraft-tech/memoize"><img src="https://img.shields.io/packagist/v/laracraft-tech/memoize" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laracraft-tech/memoize"><img src="https://img.shields.io/packagist/l/laracraft-tech/memoize" alt="License"></a>
 </p>
 
 ## Introduction
@@ -13,24 +13,24 @@ This package provides you with a simple PHP trait, which adds [memoization](http
 ## Installation
 
 ``` bash
-$ composer require laracraft-tech/do-once
+$ composer require laracraft-tech/memoize
 ```
 
 
 ## Usage
 
-The `doOnce` method accepts a `callable`.
+The `memoize` method accepts a `callable`.
 
 ```php
-use LaracraftTech\DoOnce\HasDoOnce;
+use LaracraftTech\Memoize\HasMemoization;
 
 $myClass = new class()
 {    
-    use HasDoOnce;
+    use HasMemoization;
 
     public function getNumber(): int
     {
-        return $this->doOnce(function () {
+        return $this->memoize(function () {
             return rand(1, 10000);
         });
     }
@@ -39,7 +39,7 @@ $myClass = new class()
 
 No matter how many times you run `$myClass->getNumber()` you'll always get the same number.
 
-The `doOnce` method will only run once per combination of `use` variables the closure receives.
+The `memoize` method will only run once per combination of `use` variables the closure receives.
 
 ```php
 class MyClass
@@ -49,7 +49,7 @@ class MyClass
      */
     public static function getNumberForLetter($letter)
     {
-        return $this->doOnce(function () use ($letter) {
+        return $this->memoize(function () use ($letter) {
             return $letter . rand(1, 10000000);
         }, $letter); // <-- add this for php8.0 or lower
     }
@@ -63,15 +63,15 @@ We think this feels a bit unintuitive, so we use the `use` variables of the clos
 As a fallback for php8.0 and lower or if you like/need to, we also let you fully self define your "once per combination" key in a second optional parameter of the closure.
 
 ```php
-use LaracraftTech\DoOnce\HasDoOnce;
+use LaracraftTech\Memoize\HasMemoization;
 
 class MyClass
 {
-    use HasDoOnce;
+    use HasMemoization;
     
     public static function getModelNumberForLetter($someModel)
     {
-        return self::doOnce(function () use ($someModel) {
+        return self::memoize(function () use ($someModel) {
             return $someModel->letter . rand(1, 10000000);
         }, $someModel->id);
     }
@@ -82,20 +82,20 @@ So calling `MyClass::getModelNumberForLetter(SomeModel::find(1))` will always re
 
 ## Enable/Disable
 
-You can globally enable or disable the doOnce cache by setting `DO_ONCE_GLOBALLY_DISABLED` to `true` in your `.env` file.
+You can globally enable or disable the memoize cache by setting `MEMOIZATION_GLOBALLY_DISABLED` to `true` in your `.env` file.
 
-If you only want to disable to doOnce cache for a specifiy class, do something like this:
+If you only want to disable to memoize cache for a specifiy class, do something like this:
 
 ```php
-use LaracraftTech\DoOnce\HasDoOnce;
+use LaracraftTech\Memoize\HasMemoization;
 
 class MyClass
 {
-    use HasDoOnce;
+    use HasMemoization;
     
     public function __construct()
     {
-        $this->disableDoOnce();
+        $this->disableMemoization();
     }
 }
 ```
