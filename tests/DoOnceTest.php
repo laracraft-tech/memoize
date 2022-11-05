@@ -48,36 +48,6 @@ it('will run the given callback only once per use arguments combination', functi
     }
 });
 
-it('will run the given callback only once per self defined combination', function () {
-    $testClass = new class() {
-        use HasDoOnce;
-
-        public function getNumberForLetter($letter)
-        {
-            return $this->doOnce(function () use ($letter) {
-                return $letter.rand(1, 10000000);
-            }, [$letter], 'letters');
-        }
-
-        public function getNumberForAnotherLetter($letter)
-        {
-            return $this->doOnce(function () use ($letter) {
-                return $letter.rand(1, 10000000);
-            }, [$letter], 'letters');
-        }
-    };
-
-    foreach (range('A', 'Z') as $letter) {
-        $firstResult = $testClass->getNumberForLetter($letter);
-        expect($firstResult)->toStartWith($letter);
-
-        foreach (range(1, 100) as $i) {
-            expect($testClass->getNumberForLetter($letter))->toBe($firstResult);
-            expect($testClass->getNumberForAnotherLetter($letter))->toBe($firstResult);
-        }
-    }
-});
-
 it('will run the given callback only once for falsy result', function () {
     $testClass = new class() {
         use HasDoOnce;
