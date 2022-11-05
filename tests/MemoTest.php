@@ -3,6 +3,7 @@
 namespace LaracraftTech\Memoize\Test;
 
 use LaracraftTech\Memoize\HasMemoization;
+use LaracraftTech\Memoize\MemoHelper;
 
 it('will run the a callback without arguments only once', function () {
     $testClass = new class() {
@@ -221,4 +222,21 @@ it('will run faster then spatie/once', function () {
 
 //    dump($diff1, $diff2);
     expect($diff1)->toBeLessThan($diff2);
+});
+
+it('will run statically without class context', function () {
+    function getNumber() {
+        return MemoHelper::memoize(function () {
+            return rand(1, 10000000);
+        });
+    }
+
+    $firstResult = getNumber();
+
+    expect($firstResult)->toBeGreaterThanOrEqual(1);
+    expect($firstResult)->toBeLessThanOrEqual(10000000);
+
+    foreach (range(1, 100) as $i) {
+        expect(getNumber())->toBe($firstResult);
+    }
 });

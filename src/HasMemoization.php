@@ -48,11 +48,11 @@ trait HasMemoization
 
     /**
      * @param callable $callback
-     * @param null $combinationCacheKey
+     * @param array $customCombiArgs
      * @return array|mixed
      * @throws \ReflectionException
      */
-    private static function memoize(callable $callback, array $combiArgs = [])
+    public static function memoize(callable $callback, array $customCombiArgs = [])
     {
         if (!self::isEnabledMemoization()) {
             return $callback();
@@ -63,13 +63,15 @@ trait HasMemoization
         // Since PHP 8.1 we can generate combination cache key by closure used variables,
         // if they are set and no combinationCacheKey was passed manually, we use them
         // in PHP versions below 8.1 one needs to add these manually
-        if (empty($combiArgs)) {
+        if (empty($customCombiArgs)) {
             if (PHP_VERSION_ID >= 80100) {
                 $refFunc = new \ReflectionFunction($callback);
                 $combiArgs = $refFunc->getClosureUsedVariables();
             } else {
                 $combiArgs = $trace[1]['args'];
             }
+        } else {
+            $combiArgs = $customCombiArgs;
         }
 
         $hash = self::getMemoCacheHash($combiArgs, $trace);
