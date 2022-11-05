@@ -33,5 +33,7 @@
     "require": {
         "spatie/once": "^2.2",
         "symfony/var-dumper": "^5.4"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
