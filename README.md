@@ -49,7 +49,7 @@ class MyClass
      */
     public static function getNumberForLetter($letter)
     {
-        return $this->memoize(function () use ($letter) {
+        return self::memoize(function () use ($letter) {
             return $letter . rand(1, 10000000);
         }, $letter); // <-- add this for php8.0 or lower
     }
@@ -58,27 +58,44 @@ class MyClass
 
 So calling `MyClass::getNumberForLetter('A')` will always return the same result, but calling `MyClass::getNumberForLetter('B')` will return something else.
 
-Spaties once package uses the arguments of the outer method for the "once per combination" idea.
-We think this feels a bit unintuitive, so we use the `use` variables of the closure as the "once per combination" key.
+Spaties once package uses the arguments of the *outer method* for the "once per combination" idea.
+We think this feels a bit unintuitive and in certain circumstances will loose performance, so we use the `use` variables of the closure as the "once per combination" key.
 As a fallback for php8.0 and lower or if you like/need to, we also let you fully self define your "once per combination" key in a second optional parameter of the closure.
 
 ```php
 use LaracraftTech\Memoize\HasMemoization;
 
-class MyClass
+$myClass = new class()
 {
     use HasMemoization;
     
-    public static function getModelNumberForLetter($someModel)
+    public function processSomething($someModel)
     {
-        return self::memoize(function () use ($someModel) {
-            return $someModel->letter . rand(1, 10000000);
-        }, $someModel->id);
+        // ...
+        
+        $relation = $this->memoize(function () use ($someModel) {
+            return Foo::find($someModel->foo_relation_id);
+        }, $someModel->foo_relation_id); // <--- custom "once per combination"
+        
+        // ...
+    }
+    
+    // for php8.1 you could also do something like this (maybe more convinient):
+    public function processSomething($someModel)
+    {
+        // ...
+        
+        $foo_relation_id = $someModel->foo_relation_id;
+        $relation = $this->memoize(function () use ($foo_relation_id) {
+            return Foo::find($foo_relation_id);
+        });
+        
+        // ...
     }
 }
 ```
 
-So calling `MyClass::getModelNumberForLetter(SomeModel::find(1))` will always return the same result, but calling `MyClass::getNumberForLetter(SomeModel::find(2))` will return something else.
+So when calling `$myClass->processSomething(SomeModel::find(1))` the variable `$relation` will always have the same value like in `$myClass->processSomething(SomeModel::find(2))`, when they have the same `foo_relation_id`. In spaties packge you would lose performance here, cause the *outer method* argument has changed...
 
 ## Enable/Disable
 
