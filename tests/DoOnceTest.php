@@ -42,7 +42,7 @@ it('will run the given callback only once per use arguments combination', functi
         $firstResult = $testClass->getNumberForLetter($letter);
         expect($firstResult)->toStartWith($letter);
 
-        foreach (range(1, 2) as $i) {
+        foreach (range(1, 100) as $i) {
             expect($testClass->getNumberForLetter($letter))->toBe($firstResult);
         }
     }

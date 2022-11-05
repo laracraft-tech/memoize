@@ -54,43 +54,43 @@ trait HasDoOnce
      * @return array|mixed
      * @throws \ReflectionException
      */
-    private static function doOnce(callable $callback, $combinationCacheKey = null)
+    private static function doOnce(callable $callback, array $combiArgs = [])
     {
         if (!self::isEnabledDoOnce()) {
             return $callback();
         }
 
-        $trace =  debug_backtrace(
-            DEBUG_BACKTRACE_PROVIDE_OBJECT, 2
-        );
-
-        $cache = null;
-        $cacheTypePrefix = $trace[1]['function'].'_'.$trace[0]['line'];
+        $trace =  debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
 
         // Since PHP 8.1 we can generate combination cache key by closure used variables,
         // if they are set and no combinationCacheKey was passed manually, we use them
         // in PHP versions below 8.1 one needs to add these manually
-        if (is_null($combinationCacheKey) && PHP_VERSION_ID >= 80100) {
-            $refFunc = new \ReflectionFunction($callback);
-            $combinationCacheKey = $refFunc->getClosureUsedVariables();
+        if (empty($combiArgs)) {
+            if (PHP_VERSION_ID >= 80100) {
+                $refFunc = new \ReflectionFunction($callback);
+                $combiArgs = $refFunc->getClosureUsedVariables();
+            } else {
+                $combiArgs = $trace[1]['args'];
+            }
         }
 
+        $hash = self::getDoOnceCacheHash($combiArgs, $trace);
 
-        if (!is_null($combinationCacheKey)) {
-            $combinationCacheKey = (is_array($combinationCacheKey)) ? implode('_', $combinationCacheKey) : $combinationCacheKey ;
-            if (!array_key_exists($cacheTypePrefix, self::$doOnceCache) || !array_key_exists($combinationCacheKey, self::$doOnceCache[$cacheTypePrefix])) {
-                self::$doOnceCache[$cacheTypePrefix][$combinationCacheKey] = $callback();
-            }
-
-            $cache = self::$doOnceCache[$cacheTypePrefix][$combinationCacheKey];
-        } else {
-            if (!array_key_exists($cacheTypePrefix, self::$doOnceCache)) {
-                self::$doOnceCache[$cacheTypePrefix] = $callback();
-            }
-
-            $cache = self::$doOnceCache[$cacheTypePrefix];
+        if (!array_key_exists($hash, self::$doOnceCache)) {
+            self::$doOnceCache[$hash] = $callback();
         }
 
-        return $cache;
+        return self::$doOnceCache[$hash];
+    }
+
+    private static function getDoOnceCacheHash(array $arguments, $trace): string
+    {
+        $prefix = $trace[1]['function'].'_'.$trace[0]['line'];
+
+        $normalizedArguments = array_map(function ($argument) {
+            return is_object($argument) ? spl_object_hash($argument) : $argument;
+        }, $arguments);
+
+        return md5($prefix.'_'.serialize($normalizedArguments));
     }
 }
