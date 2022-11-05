@@ -19,7 +19,7 @@ $ composer require laracraft-tech/do-once
 
 ## Usage
 
-The `doOnce` function accepts a `callable`.
+The `doOnce` method accepts a `callable`.
 
 ```php
 use LaracraftTech\DoOnce\HasDoOnce;
@@ -39,11 +39,28 @@ $myClass = new class()
 
 No matter how many times you run `$myClass->getNumber()` you'll always get the same number.
 
-The `doOnce` function will only run once per combination.
+The `doOnce` method will only run once per combination of `use` variables the closure receives.
 
-Spaties once package uses the arguments of the outer function for the "once per combination" idea.
-Which does not work, if you want to use variables inside the callable which are not passed as a parameter to the outer function!
-We let you fully self define your "once per combination" key.
+```php
+class MyClass
+{
+    /**
+     * It also works in static context!
+     */
+    public static function getNumberForLetter($letter)
+    {
+        return $this->doOnce(function () use ($letter) {
+            return $letter . rand(1, 10000000);
+        }, $letter); // <-- add this for php8.0 or lower
+    }
+}
+```
+
+So calling `MyClass::getNumberForLetter('A')` will always return the same result, but calling `MyClass::getNumberForLetter('B')` will return something else.
+
+Spaties once package uses the arguments of the outer method for the "once per combination" idea.
+We think this feels a bit unintuitive, so we use the `use` variables of the closure as the "once per combination" key.
+As a fallback for php8.0 and lower or if you like/need to, we also let you fully self define your "once per combination" key in a second optional parameter of the closure.
 
 ```php
 use LaracraftTech\DoOnce\HasDoOnce;
@@ -52,19 +69,16 @@ class MyClass
 {
     use HasDoOnce;
     
-    /**
-     * It also works in static context!
-     */
-    public static function getNumberForLetter($someModel, $letter)
+    public static function getModelNumberForLetter($someModel)
     {
-        return self::doOnce(function () use ($letter, $someModel) {
-            return $letter . rand(1, 10000000) . $someModel->title;
-        }, [$letter, $someModel->id]); // <-- set your "once per combination" key (array|string|int)
+        return self::doOnce(function () use ($someModel) {
+            return $someModel->letter . rand(1, 10000000);
+        }, $someModel->id);
     }
 }
 ```
 
-So calling `MyClass::getModelNumberForLetter(SomeModel::find(1), 'A')` will always return the same result, but calling `MyClass::getNumberForLetter(SomeModel::find(1), 'B')` will return something else.
+So calling `MyClass::getModelNumberForLetter(SomeModel::find(1))` will always return the same result, but calling `MyClass::getNumberForLetter(SomeModel::find(2))` will return something else.
 
 ## Enable/Disable
 
