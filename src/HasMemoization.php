@@ -59,6 +59,7 @@ trait HasMemoization
         }
 
         $trace =  debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
+        $prefix = $trace[1]['function'].'_'.$trace[0]['line'];
 
         // Since PHP 8.1 we can generate combination cache key by closure used variables,
         // if they are set and no combinationCacheKey was passed manually, we use them
@@ -74,7 +75,7 @@ trait HasMemoization
             $combiArgs = $customCombiArgs;
         }
 
-        $hash = self::getMemoCacheHash($combiArgs, $trace);
+        $hash = self::getMemoCacheHash($combiArgs, $prefix);
 
         if (!array_key_exists($hash, self::$memoizationCache)) {
             self::$memoizationCache[$hash] = $callback();
@@ -83,10 +84,8 @@ trait HasMemoization
         return self::$memoizationCache[$hash];
     }
 
-    private static function getMemoCacheHash(array $arguments, $trace): string
+    private static function getMemoCacheHash(array $arguments, string $prefix): string
     {
-        $prefix = $trace[1]['function'].'_'.$trace[0]['line'];
-
         $normalizedArguments = array_map(function ($argument) {
             return is_object($argument) ? spl_object_hash($argument) : $argument;
         }, $arguments);

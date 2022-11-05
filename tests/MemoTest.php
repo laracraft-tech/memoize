@@ -2,6 +2,7 @@
 
 namespace LaracraftTech\Memoize\Test;
 
+use LaracraftTech\Memoize\DummyClass;
 use LaracraftTech\Memoize\HasMemoization;
 use LaracraftTech\Memoize\MemoHelper;
 
