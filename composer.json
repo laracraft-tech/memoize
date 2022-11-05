@@ -31,6 +31,7 @@
         "pestphp/pest": "^1.22"
     },
     "require": {
+        "php": "^7.3|^8.0",
         "spatie/once": "^2.2",
         "symfony/var-dumper": "^5.4"
     },
