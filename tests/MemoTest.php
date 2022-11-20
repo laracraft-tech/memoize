@@ -102,29 +102,6 @@ it('will remember the memoized value when serialized when called in the same req
     expect($testClass->getRandomNumber())->toBe($firstNumber);
 });
 
-it('will run callback once on static method', function () {
-    $object = new class() {
-        use HasMemoization;
-
-        public static function getNumber()
-        {
-            return self::memoize(function () {
-                return rand(1, 10000000);
-            });
-        }
-    };
-    $class = get_class($object);
-
-    $firstResult = $class::getNumber();
-
-    expect($firstResult)->toBeGreaterThanOrEqual(1);
-    expect($firstResult)->toBeLessThanOrEqual(10000000);
-
-    foreach (range(1, 100) as $i) {
-        expect($class::getNumber())->toBe($firstResult);
-    }
-});
-
 it('can enable and disable the cache', function () {
     $testClass = new class() {
         use HasMemoization;
@@ -137,15 +114,15 @@ it('can enable and disable the cache', function () {
         }
     };
 
-    expect($testClass::isEnabledMemoization())->toBeTrue();
+    expect($testClass->isEnabledMemoization())->toBeTrue();
     expect($testClass->getNumber())->toBe($testClass->getNumber());
 
-    $testClass::disableMemoization();
+    $testClass->disableMemoization();
     expect($testClass->isEnabledMemoization())->toBeFalse();
     expect($testClass->getNumber())->not()->toBe($testClass->getNumber());
 
-    $testClass::enableMemoization();
-    expect($testClass::isEnabledMemoization())->toBeTrue();
+    $testClass->enableMemoization();
+    expect($testClass->isEnabledMemoization())->toBeTrue();
     expect($testClass->getNumber())->toBe($testClass->getNumber());
 });
 //
@@ -223,21 +200,4 @@ it('will run faster then spatie/once', function () {
 
 //    dump($diff1, $diff2);
     expect($diff1)->toBeLessThan($diff2);
-});
-
-it('will run statically without class context', function () {
-    function getNumber() {
-        return MemoHelper::memoize(function () {
-            return rand(1, 10000000);
-        });
-    }
-
-    $firstResult = getNumber();
-
-    expect($firstResult)->toBeGreaterThanOrEqual(1);
-    expect($firstResult)->toBeLessThanOrEqual(10000000);
-
-    foreach (range(1, 100) as $i) {
-        expect(getNumber())->toBe($firstResult);
-    }
 });

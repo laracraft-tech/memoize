@@ -10,6 +10,8 @@
 
 This package provides you with a simple PHP trait, which adds [memoization](https://en.wikipedia.org/wiki/Memoization) to your classes! It's inspired by spaties once package, but it is up to **100% faster**!
 
+Note: As this is a trait it only runs in class contexts and not statically.
+
 ## Installation
 
 ``` bash
@@ -44,21 +46,20 @@ The `memoize` method will only run **once per combination** of `use` variables t
 For lower php versions, it will run **once per combination** of argument values the ***containing method*** receives.
 
 ```php
-class MyClass
+$myClass = new class()
 {
-    /**
-     * It also works in static context!
-     */
-    public static function getNumberForLetter($letter)
+    use HasMemoization;
+    
+    public function getNumberForLetter($letter)
     {
-        return self::memoize(function () use ($letter) {
+        return $this->memoize(function () use ($letter) {
             return $letter . rand(1, 10000000);
         });
     }
 }
 ```
 
-So calling `MyClass::getNumberForLetter('A')` will always return the same result, but calling `MyClass::getNumberForLetter('B')` will return something else.
+So calling `$myClass->getNumberForLetter('A')` will always return the same result, but calling `$myClass->getNumberForLetter('B')` will return something else.
 
 As described above, spaties once package uses the arguments of the ***containing method*** for the **once per combination** idea.
 We think this feels a bit unintuitive and in certain circumstances will affect performance. So we use the `use` variables of the closure as the **once per combination** key. As a fallback for php8.0 and lower or if you like/need to, we also let you fully self define your **once per combination** key in a second optional parameter of the closure.

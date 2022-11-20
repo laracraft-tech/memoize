@@ -9,41 +9,41 @@ trait HasMemoization
      *
      * @var array
      */
-    protected static $memoizationCache = [];
+    protected $memoizationCache = [];
 
     /**
      * specifies if memoization should be applied
      *
      * @var bool
      */
-    protected static $memoizationEnabled = true;
+    protected $memoizationEnabled = true;
 
     /**
      * @return void
      */
-    public static function enableMemoization()
+    public function enableMemoization()
     {
-        self::$memoizationEnabled = true;
+        $this->memoizationEnabled = true;
     }
 
     /**
      * @return void
      */
-    public static function disableMemoization()
+    public function disableMemoization()
     {
-        self::$memoizationEnabled = false;
+        $this->memoizationEnabled = false;
     }
 
     /**
      * @return bool
      */
-    public static function isEnabledMemoization(): bool
+    public function isEnabledMemoization(): bool
     {
         if (isset($_ENV['MEMOIZATION_GLOBALLY_DISABLED'])) {
             return $_ENV['MEMOIZATION_GLOBALLY_DISABLED'];
         }
 
-        return self::$memoizationEnabled;
+        return $this->memoizationEnabled;
     }
 
     /**
@@ -52,9 +52,9 @@ trait HasMemoization
      * @return array|mixed
      * @throws \ReflectionException
      */
-    public static function memoize(callable $callback, array $customCombiArgs = [])
+    public function memoize(callable $callback, array $customCombiArgs = [])
     {
-        if (!self::isEnabledMemoization()) {
+        if (!$this->isEnabledMemoization()) {
             return $callback();
         }
 
@@ -75,16 +75,16 @@ trait HasMemoization
             $combiArgs = $customCombiArgs;
         }
 
-        $hash = self::getMemoCacheHash($combiArgs, $prefix);
+        $hash = $this->getMemoCacheHash($combiArgs, $prefix);
 
-        if (!array_key_exists($hash, self::$memoizationCache)) {
-            self::$memoizationCache[$hash] = $callback();
+        if (!array_key_exists($hash, $this->memoizationCache)) {
+            $this->memoizationCache[$hash] = $callback();
         }
 
-        return self::$memoizationCache[$hash];
+        return $this->memoizationCache[$hash];
     }
 
-    private static function getMemoCacheHash(array $arguments, string $prefix): string
+    private function getMemoCacheHash(array $arguments, string $prefix): string
     {
         $normalizedArguments = array_map(function ($argument) {
             return is_object($argument) ? spl_object_hash($argument) : $argument;
