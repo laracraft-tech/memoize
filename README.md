@@ -8,9 +8,7 @@
 
 ## Introduction
 
-This package provides you with a simple PHP trait, which adds [memoization](https://en.wikipedia.org/wiki/Memoization) to your classes! It's inspired by spaties once package, but it is up to **100% faster**!
-
-Note: As this is a trait it only runs in class contexts and not statically.
+This package provides you with a simple PHP trait, which adds high-performance [memoization](https://en.wikipedia.org/wiki/Memoization) to your classes!
 
 ## Installation
 
@@ -41,9 +39,7 @@ $myClass = new class()
 
 No matter how many times you run `$myClass->getNumber()` you'll always get the same number.
 
-The `memoize` method will only run **once per combination** of `use` variables the ***closure*** receives (since: php8.1).
-
-For lower php versions, it will run **once per combination** of argument values the ***containing method*** receives.
+The `memoize` method will only run **once per combination** of `use` variables the ***closure*** receives.
 
 ```php
 $myClass = new class()
@@ -61,8 +57,8 @@ $myClass = new class()
 
 So calling `$myClass->getNumberForLetter('A')` will always return the same result, but calling `$myClass->getNumberForLetter('B')` will return something else.
 
-As described above, spaties once package uses the arguments of the ***containing method*** for the **once per combination** idea.
-We think this feels a bit unintuitive and in certain circumstances will affect performance. So we use the `use` variables of the closure as the **once per combination** key. As a fallback for php8.0 and lower or if you like/need to, we also let you fully self define your **once per combination** key in a second optional parameter of the closure.
+Some memoization packages uses the arguments of the ***containing method*** for the **once per combination** idea.
+We think this feels a bit unintuitive and in certain circumstances will affect performance. So we use the `use` variables of the closure as the **once per combination** key. As a fallback, if you like/need to, we also let you fully self define your **once per combination** key in a second optional parameter of the closure.
 
 ```php
 use LaracraftTech\Memoize\HasMemoization;
@@ -82,7 +78,7 @@ $myClass = new class()
         // ...
     }
     
-    // for php8.1 you could also do something like this (maybe more convinient):
+    // you could also do something like this (maybe more convinient)
     public function processSomethingHeavy2($someModel)
     {
         // ...
@@ -95,7 +91,7 @@ $myClass = new class()
         // ...
     }
     
-    // this would work but will loose performance on each new $someModel even foo_relation_id would be the same
+    // this would work but will lose performance on each new $someModel even foo_relation_id would be the same
     public function processSomethingHeavy3($someModel)
     {
         // ...
@@ -109,7 +105,7 @@ $myClass = new class()
 }
 ```
 
-So when calling `$myClass->processSomethingHeavy1(SomeModel::find(1))` the variable `$relation` will always have the same value like in `$myClass->processSomethingHeavy1(SomeModel::find(2))` as long as they have the same `foo_relation_id`. In spaties packge you would lose performance here, cause the ***containing method*** parameter ($someModel) has changed... Note that `processSomethingHeavy3` would also loose performance, even though the `foo_relation_id` would be the same, cause here also the changed **$someModel** would be used as the combination key.
+So when calling `$myClass->processSomethingHeavy1(SomeModel::find(1))` the variable `$relation` will always have the same value as in `$myClass->processSomethingHeavy1(SomeModel::find(2))` as long as they have the same `foo_relation_id`. In spaties packge you would lose performance here, cause the ***containing method*** parameter ($someModel) has changed... Note that `processSomethingHeavy3` would also loose performance, even though the `foo_relation_id` would be the same, cause here also the changed **$someModel** would be used as the combination key.
 
 ## Enable/Disable
 
