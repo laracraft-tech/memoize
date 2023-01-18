@@ -105,7 +105,7 @@ $myClass = new class()
 }
 ```
 
-So when calling `$myClass->processSomethingHeavy1(SomeModel::find(1))` the variable `$relation` will always have the same value as in `$myClass->processSomethingHeavy1(SomeModel::find(2))` as long as they have the same `foo_relation_id`. In some other memoization packges you would lose performance here, cause the ***containing method*** parameter ($someModel) has changed... Note that `processSomethingHeavy3` would also lose performance, even though the `foo_relation_id` would be the same, cause here also the changed **$someModel** would be used as the combination key and that model would have at least a different id.
+So when calling `$myClass->processSomethingHeavy1(SomeModel::find(1))` the variable `$relation` will always have the same value like in `$myClass->processSomethingHeavy1(SomeModel::find(2))` as long as they have the same `foo_relation_id`. In some other memoization packges you would lose performance here, cause the ***containing method*** parameter ($someModel) has changed... Note that `processSomethingHeavy3` would also lose performance, even though the `foo_relation_id` would be the same, cause here also the changed **$someModel** would be used as the combination key and that model would have at least a different id.
 
 ## Enable/Disable
 
