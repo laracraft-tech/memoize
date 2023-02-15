@@ -1,6 +1,6 @@
 <?php
 
-namespace LaracraftTech\Memoize\Test;
+namespace LaracraftTech\Memoize\Tests;
 
 use LaracraftTech\Memoize\HasMemoization;
 

@@ -2,19 +2,6 @@
     "name": "laracraft-tech/memoize",
     "description": "Simple PHP trait to memoize function calls.",
     "type": "library",
-    "autoload": {
-        "psr-4": {
-            "LaracraftTech\\Memoize\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "LaracraftTech\\Memoize\\Test\\": "tests"
-        }
-    },
-    "scripts": {
-        "test": "vendor/bin/pest"
-    },
     "authors": [
         {
             "name": "Zacharias Creutznacher",
@@ -23,12 +10,12 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "spatie/once": "^3.1"
     },
     "require-dev": {
         "pestphp/pest": "^1.20",
-        "laravel/pint": "^1.2",
-        "spatie/ray": "^1.28"
+        "laravel/pint": "^1.2"
     },
     "autoload": {
         "psr-4": {

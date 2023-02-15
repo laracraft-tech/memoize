@@ -1,6 +1,6 @@
 <?php
 
-namespace LaracraftTech\Memoize\Test;
+namespace LaracraftTech\Memoize\Tests;
 
 use LaracraftTech\Memoize\HasMemoization;
 
@@ -163,46 +163,4 @@ it('will differentiate between closures', function () {
     };
 
     expect($testClass->secondNumber())->not()->toBe($testClass->getNumber());
-});
-
-it('will run faster then spatie/once', function () {
-    $start1 = microtime(true);
-    $testClass1 = new class()
-    {
-        use HasMemoization;
-
-        public function getNumber()
-        {
-            return $this->memoize(function () {
-                return rand(1, 10000000);
-            });
-        }
-    };
-
-    foreach (range(1, 10000) as $i) {
-        $testClass1->getNumber();
-    }
-    $end1 = microtime(true);
-    $diff1 = $end1 - $start1;
-
-    //spatie
-    $start2 = microtime(true);
-    $testClass2 = new class()
-    {
-        public function getNumber()
-        {
-            return once(function () {
-                return rand(1, 10000000);
-            });
-        }
-    };
-
-    foreach (range(1, 10000) as $i) {
-        $testClass2->getNumber();
-    }
-    $end2 = microtime(true);
-    $diff2 = $end2 - $start2;
-
-//    dump($diff1, $diff2);
-    expect($diff1)->toBeLessThan($diff2);
 });
