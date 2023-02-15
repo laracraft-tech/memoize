@@ -34,9 +34,6 @@ trait HasMemoization
         $this->memoizationEnabled = false;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabledMemoization(): bool
     {
         if (isset($_ENV['MEMOIZATION_GLOBALLY_DISABLED'])) {
@@ -47,18 +44,17 @@ trait HasMemoization
     }
 
     /**
-     * @param callable $callback
-     * @param array $customCombiArgs
      * @return array|mixed
+     *
      * @throws \ReflectionException
      */
     public function memoize(callable $callback, array $customCombiArgs = [])
     {
-        if (!$this->isEnabledMemoization()) {
+        if (! $this->isEnabledMemoization()) {
             return $callback();
         }
 
-        $trace =  debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
+        $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
         $prefix = $trace[1]['function'].'_'.$trace[0]['line'];
 
         // Since PHP 8.1 we can generate combination cache key by closure used variables,
@@ -72,7 +68,7 @@ trait HasMemoization
 
         $hash = $this->getMemoCacheHash($combiArgs, $prefix);
 
-        if (!array_key_exists($hash, $this->memoizationCache)) {
+        if (! array_key_exists($hash, $this->memoizationCache)) {
             $this->memoizationCache[$hash] = $callback();
         }
 

@@ -2,12 +2,11 @@
 
 namespace LaracraftTech\Memoize\Test;
 
-use LaracraftTech\Memoize\DummyClass;
 use LaracraftTech\Memoize\HasMemoization;
-use LaracraftTech\Memoize\MemoHelper;
 
 it('will run the a callback without arguments only once', function () {
-    $testClass = new class() {
+    $testClass = new class()
+    {
         use HasMemoization;
 
         public function getNumber()
@@ -29,7 +28,8 @@ it('will run the a callback without arguments only once', function () {
 });
 
 it('will run the given callback only once per use arguments combination', function () {
-    $testClass = new class() {
+    $testClass = new class()
+    {
         use HasMemoization;
 
         public function getNumberForLetter($letter)
@@ -51,7 +51,8 @@ it('will run the given callback only once per use arguments combination', functi
 });
 
 it('will run the given callback only once for falsy result', function () {
-    $testClass = new class() {
+    $testClass = new class()
+    {
         use HasMemoization;
 
         public $counter = 0;
@@ -103,7 +104,8 @@ it('will remember the memoized value when serialized when called in the same req
 });
 
 it('can enable and disable the cache', function () {
-    $testClass = new class() {
+    $testClass = new class()
+    {
         use HasMemoization;
 
         public function getNumber()
@@ -133,7 +135,8 @@ it('can enable and disable the cache', function () {
 //});
 
 it('will differentiate between closures', function () {
-    $testClass = new class() {
+    $testClass = new class()
+    {
         use HasMemoization;
 
         public function getNumber()
@@ -164,7 +167,8 @@ it('will differentiate between closures', function () {
 
 it('will run faster then spatie/once', function () {
     $start1 = microtime(true);
-    $testClass1 = new class() {
+    $testClass1 = new class()
+    {
         use HasMemoization;
 
         public function getNumber()
@@ -179,11 +183,12 @@ it('will run faster then spatie/once', function () {
         $testClass1->getNumber();
     }
     $end1 = microtime(true);
-    $diff1 = $end1-$start1;
+    $diff1 = $end1 - $start1;
 
     //spatie
     $start2 = microtime(true);
-    $testClass2 = new class() {
+    $testClass2 = new class()
+    {
         public function getNumber()
         {
             return once(function () {
@@ -196,7 +201,7 @@ it('will run faster then spatie/once', function () {
         $testClass2->getNumber();
     }
     $end2 = microtime(true);
-    $diff2 = $end2-$start2;
+    $diff2 = $end2 - $start2;
 
 //    dump($diff1, $diff2);
     expect($diff1)->toBeLessThan($diff2);

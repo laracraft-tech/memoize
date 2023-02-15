@@ -1,10 +1,10 @@
 # Memoize
 
-<p align="left">
-<!--<a href="https://packagist.org/packages/laracraft-tech/memoize"><img src="https://img.shields.io/packagist/dt/laracraft-tech/memoize" alt="Total Downloads"></a>-->
-<a href="https://packagist.org/packages/laracraft-tech/memoize"><img src="https://img.shields.io/packagist/v/laracraft-tech/memoize" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laracraft-tech/memoize"><img src="https://img.shields.io/packagist/l/laracraft-tech/memoize" alt="License"></a>
-</p>
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/laracraft-tech/memoize.svg?style=flat-square)](https://packagist.org/packages/laracraft-tech/memoize)
+[![Tests](https://github.com/laracraft-tech/memoize/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/laracraft-tech/memoize/actions/workflows/run-tests.yml)
+[![Check & fix styling](https://github.com/laracraft-tech/memoize/actions/workflows/fix-php-code-style-issues.yml/badge.svg?branch=main)](https://github.com/laracraft-tech/memoize/actions/workflows/fix-php-code-style-issues.yml)
+[![License](https://img.shields.io/packagist/l/laracraft-tech/memoize.svg?style=flat-square)](https://packagist.org/packages/laracraft-tech/memoize)
+<!--[![Total Downloads](https://img.shields.io/packagist/dt/laracraft-tech/memoize.svg?style=flat-square)](https://packagist.org/packages/laracraft-tech/memoize)-->
 
 ## Introduction
 
